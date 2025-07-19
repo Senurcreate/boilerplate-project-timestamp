@@ -3,16 +3,16 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // Middleware
-app.use(express.static('public'));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Routes
+// Route handler
 app.get('/api/:date?', (req, res) => {
-  let dateString = req.params.date;
+  let dateParam = req.params.date;
   let date;
 
   // Handle empty date parameter (current time)
-  if (!dateString) {
+  if (!dateParam) {
     date = new Date();
     return res.json({
       unix: date.getTime(),
@@ -20,11 +20,11 @@ app.get('/api/:date?', (req, res) => {
     });
   }
 
-  // Check if it's a Unix timestamp (number string)
-  if (/^\d+$/.test(dateString)) {
-    date = new Date(parseInt(dateString));
+  // Check if it's a Unix timestamp (numeric string)
+  if (/^\d+$/.test(dateParam)) {
+    date = new Date(parseInt(dateParam));
   } else {
-    date = new Date(dateString);
+    date = new Date(dateParam);
   }
 
   // Handle invalid date
